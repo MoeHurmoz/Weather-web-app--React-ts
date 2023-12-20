@@ -1,0 +1,26 @@
+.footer-container {
+  margin-top: auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  padding: 10px 10px;
+  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.copyright {
+  margin-inline-end: 5px;
+}
+
+.linkedin-anchor {
+  text-decoration: none;
+  color: black;
+  display: inline-flex;
+}
+
+.icon {
+  font-size: 20px !important;
+  align-self: self-end;
+  margin-inline-start: 3px;
+}
