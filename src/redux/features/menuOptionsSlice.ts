@@ -1,15 +1,57 @@
-import { createSlice } from "../../imports/Redux-Imports";
+import { createSlice, PayloadAction } from "../../imports/Redux-Imports";
+import { UrlContext, Location } from "../../contexts/UrlInfoContext";
+import { ShowSnackbarAlertProps } from "../../contexts/SnackbarContext";
+import { i18n } from "i18next";
+
+// ===== [ INTERFACE DECLARATIONS ] ===== //
+interface InitialState {
+  options: {
+    openLocation: boolean;
+    openRadio: boolean;
+    location?: Location | null;
+    title?: string;
+    options?: {
+      label: string;
+      value: string;
+    }[];
+    selectedValue?: string;
+  };
+}
+
+interface ClickPayload {
+  clickedFrom: string;
+  currentLang: string;
+  t: i18n["t"];
+}
+
+interface ConfirmeLocationPayload extends Pick<ClickPayload, "t"> {
+  UIC: UrlContext;
+  handleCloseMenu: () => void;
+  showSnackbarAlert: (config: ShowSnackbarAlertProps) => void;
+}
+
+interface ConfirmeRadioPayload extends ConfirmeLocationPayload {
+  i18n: i18n;
+}
+
+interface UnitReadable {
+  currentUnit: string;
+  newUnit: string;
+}
+
+// ===== [ INITIAL STATE ] ===== //
+const initialState: InitialState = {
+  options: {
+    openLocation: false,
+    openRadio: false,
+  },
+};
 
 const menuOptionsSlice = createSlice({
   name: "menuOptions",
-  initialState: {
-    options: {
-      openLocation: false,
-      openRadio: false,
-    },
-  },
+  initialState,
   reducers: {
-    click: (state, action) => {
+    click: (state, action: PayloadAction<ClickPayload>) => {
       const { clickedFrom } = action.payload;
 
       switch (clickedFrom) {
@@ -62,43 +104,50 @@ const menuOptionsSlice = createSlice({
       }
     },
 
-    closeLocation: (state, action) => {
+    closeLocation: (state, action: PayloadAction<undefined>) => {
       state.options = { ...state.options, openLocation: false };
     },
 
-    closeRadio: (state, action) => {
+    closeRadio: (state, action: PayloadAction<undefined>) => {
       state.options = { ...state.options, openRadio: false };
     },
 
-    changeLocation: (state, action) => {
+    changeLocation: (state, action: PayloadAction<Location>) => {
       state.options = { ...state.options, location: action.payload };
     },
 
-    changeRadio: (state, action) => {
+    changeRadio: (state, action: PayloadAction<string>) => {
       state.options = { ...state.options, selectedValue: action.payload };
     },
 
-    confirmeLocation: (state, action) => {
+    confirmeLocation: (
+      state,
+      action: PayloadAction<ConfirmeLocationPayload>
+    ) => {
       const { urlInfo, setUrlInfo } = action.payload.UIC;
 
       if (state.options.location != null) {
         // NEW LOCATION:
-        const location = {
-          countryCode: state.options.location.code,
-          cityName: state.options.location.label.split(",")[0],
+        const location: Location = {
+          countryCode: state.options.location.countryCode,
+          cityName: state.options.location.cityName.split(",")[0],
         };
 
         // CURRENT LOCATION:
-        const current = {
-          countryCode: JSON.parse(localStorage.getItem("Location")).countryCode,
-          cityName: JSON.parse(localStorage.getItem("Location")).cityName,
+        const current: Location = {
+          countryCode: JSON.parse(
+            localStorage.getItem("Location") as Location["countryCode"]
+          ).countryCode,
+          cityName: JSON.parse(
+            localStorage.getItem("Location") as Location["cityName"]
+          ).cityName,
         };
 
         if (
           location.countryCode !== current.countryCode ||
           location.cityName !== current.cityName
         ) {
-          setUrlInfo({ ...urlInfo, location, type: "location" });
+          setUrlInfo!({ ...urlInfo!, location, type: "location" });
           action.payload.handleCloseMenu();
           state.options = { openLocation: false, openRadio: false };
         } else {
@@ -117,22 +166,25 @@ const menuOptionsSlice = createSlice({
       }
     },
 
-    confirmeRadio: (state, action) => {
+    confirmeRadio: (state, action: PayloadAction<ConfirmeRadioPayload>) => {
       const { UIC, showSnackbarAlert, t, i18n, handleCloseMenu } =
         action.payload;
       const { urlInfo, setUrlInfo } = UIC;
 
-      const confirmedFrom = state.options.title.match(/^\w{4}/)[0];
-      const newValue =
+      const confirmedFrom: string = state.options.title!.match(/^\w{4}/)![0];
+      const newValue: string =
         state.options.selectedValue === "default"
-          ? navigator.language.match(/^[a-z]{2}(?=-)*/)[0] ?? "en"
-          : state.options.selectedValue;
+          ? navigator.language.match(/^[a-z]{2}(?=-)*/)![0] ?? "en"
+          : (state.options.selectedValue as string);
 
       // CONVERT VALUE TO USER READABLE:
-      const userReadable = (newValue, currentValue = false) => {
+      const userReadable = (
+        newValue: string,
+        currentValue: string | boolean = false
+      ): string | UnitReadable => {
         if (currentValue) {
           // CONVERT UNIT VALUE TO SYMBOL:
-          let currentUnit, newUnit;
+          let currentUnit: string, newUnit: string;
           switch (currentValue) {
             case "metric":
               currentUnit = "°C";
@@ -156,7 +208,7 @@ const menuOptionsSlice = createSlice({
           return { currentUnit, newUnit };
         } else {
           // CONVERT LANGUAGE CODE TO LANGUAGE NAME:
-          let newLang;
+          let newLang: string;
           switch (newValue) {
             case "en":
               newLang = "English";
@@ -173,12 +225,12 @@ const menuOptionsSlice = createSlice({
 
       switch (confirmedFrom) {
         case "Unit": {
-          if (newValue !== urlInfo.unit) {
-            setUrlInfo({ ...urlInfo, unit: newValue, type: "unit" });
+          if (newValue !== urlInfo!.unit) {
+            setUrlInfo!({ ...urlInfo!, unit: newValue, type: "unit" });
             const { currentUnit, newUnit } = userReadable(
               newValue,
-              urlInfo.unit
-            );
+              urlInfo!.unit
+            ) as UnitReadable;
             showSnackbarAlert({
               message: `${t("Unit was changed from")} ${currentUnit} 
            ${t("to")} ${newUnit}`,
@@ -197,7 +249,7 @@ const menuOptionsSlice = createSlice({
           break;
         }
         case "Lang": {
-          const currentLang = urlInfo.lang;
+          const currentLang: string = urlInfo!.lang;
 
           if (state.options.selectedValue === "default") {
             if (newValue === "en" && currentLang === "en") {
@@ -218,11 +270,11 @@ const menuOptionsSlice = createSlice({
           }
 
           if (newValue !== currentLang) {
-            setUrlInfo({ ...urlInfo, lang: newValue, type: "lang" });
+            setUrlInfo!({ ...urlInfo!, lang: newValue, type: "lang" });
 
             i18n.changeLanguage(newValue);
 
-            const newLang = userReadable(newValue);
+            const newLang = userReadable(newValue) as string;
 
             switch (newValue) {
               case "ar": {

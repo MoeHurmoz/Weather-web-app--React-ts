@@ -6,7 +6,7 @@ export default function Footer() {
   // ===== [ CUSTOM HOOK ] ===== //
   const { t, i18n } = useTranslation();
 
-  const currentYear = new Date().getFullYear();
+  const currentYear: number = new Date().getFullYear();
 
   return (
     <footer className="footer-container">

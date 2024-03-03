@@ -1,4 +1,5 @@
 export {
+  Alert,
   Autocomplete,
   Box,
   Button,
@@ -21,8 +22,9 @@ export {
   ThemeProvider,
 } from "@mui/material";
 
-export { default as MuiAlert } from "@mui/material/Alert";
+// ===== [ TYPES & INTERFACES IMPORT ] ===== //
+export type { AlertColor, SnackbarOrigin } from "@mui/material";
 
-// ICONS IMPORT:
+// ===== [ ICONS IMPORT ] ===== //
 export { default as MenuIcon } from "@mui/icons-material/Menu";
 export { default as LinkedInIcon } from "@mui/icons-material/LinkedIn";

@@ -1,15 +1,15 @@
 {
   "short_name": "Weather",
   "name": "Current Weather",
-  "description": "Current weather and date at your location or the location you want.. \n.الطقس الحالي والتاريخ في موقعك أو الموقع الذي تريده",
+  "description": "Current weather and date at your location or the location you want.. \n..الطقس الحالي والتاريخ في موقعك أو الموقع الذي تريده",
   "icons": [
     {
-      "src": "tabs-icon.png",
+      "src": "assets/tabs-icon.png",
       "type": "image/png",
       "sizes": "16x16"
     },
     {
-      "src": "app-icon.png",
+      "src": "assets/app-icon.png",
       "type": "image/png",
       "sizes": "512x512"
     }

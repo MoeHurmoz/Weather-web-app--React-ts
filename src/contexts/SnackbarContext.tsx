@@ -1,29 +1,50 @@
 import { createContext, useContext, useState } from "../imports/React-Imports";
 import SnackbarAlert from "../components/alerts/SnackbarAlert";
 
-const SnackbarContext = createContext({});
+// ===== [ INTERFACE DECLARATIONS ] ===== //
+interface SnackbarProviderProps {
+  children: React.ReactNode;
+}
+
+export interface ShowSnackbarAlertProps {
+  message: string;
+  severity?: string;
+  duration: number;
+}
+
+interface ShowSnackbarAlertFunc {
+  showSnackbarAlert?: (config: ShowSnackbarAlertProps) => void;
+}
+
+// ===== [ CONTEXT ] ===== //
+const SnackbarContext = createContext<ShowSnackbarAlertFunc>({});
 
 // CUSTOM HOOK:
 export const useSnackbar = () => useContext(SnackbarContext);
 
 // PROVIDER COMPONENT:
-export function SnackbarProvider({ children }) {
+export function SnackbarProvider({ children }: SnackbarProviderProps) {
+  // ===== [ STATE ] ===== //
   const [snackbarAlert, setSnackbarAlert] = useState({
     open: false,
-    message: null,
-    severity: null,
-    duration: null,
+    message: "",
+    severity: "success",
+    duration: 0,
   });
 
+  // ===== [ SNACKBAR ALERT HANDLERS ] ===== //
   const showSnackbarAlert = ({
-    message = "No Message",
+    message,
     severity = "success",
     duration,
-  }) => {
+  }: ShowSnackbarAlertProps): void => {
     setSnackbarAlert({ open: true, message, severity, duration });
   };
 
-  const closeSnackbarAlert = (event, reason) => {
+  const closeSnackbarAlert = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ): void => {
     if (reason === "clickaway") {
       return;
     }

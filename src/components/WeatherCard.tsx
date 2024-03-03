@@ -3,12 +3,15 @@ import * as MUI from "../imports/MUI-Imports";
 import MenuButton from "./options/MenuButton";
 import { useUrlInfo } from "../contexts/UrlInfoContext";
 import { useMemo, useEffect } from "../imports/React-Imports";
-import { useSelector, useDispatch } from "../imports/Redux-Imports";
+import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { useTranslation } from "../imports/Other-Imports";
-import { fetchGeoAndWeather } from "../redux/features/geoAndWeatherSlice";
+import {
+  fetchGeoAndWeather,
+  AsyncThunkPayload,
+} from "../redux/features/geoAndWeatherSlice";
 import { useSnackbar } from "../contexts/SnackbarContext";
 import "moment/min/locales";
-import errorImg from "../notFound.jpg";
+import errorImg from "../assets/notFound.jpg";
 
 export default function WeatherCard() {
   // ===== [ CUSTOM HOOKS ] ===== //
@@ -17,15 +20,21 @@ export default function WeatherCard() {
   const { showSnackbarAlert } = useSnackbar();
 
   // ===== [ REDUX HOOKS ] ===== //
-  const showLoader = useSelector((state) => state.geoAndWeather.showLoader);
-  const isError = useSelector((state) => state.geoAndWeather.isError);
-  const data = useSelector((state) => state.geoAndWeather.data);
-  const dispatch = useDispatch();
+  const showLoader = useAppSelector((state) => state.geoAndWeather.showLoader);
+  const isError = useAppSelector((state) => state.geoAndWeather.isError);
+  const data = useAppSelector((state) => state.geoAndWeather.data);
+  const dispatch = useAppDispatch();
 
   // ===== [ SIDE EFFECTS ] ===== //
   useEffect(() => {
     const controller = new AbortController();
-    dispatch(fetchGeoAndWeather({ controller, urlInfo, showSnackbarAlert }));
+    dispatch(
+      fetchGeoAndWeather({
+        controller,
+        urlInfo,
+        showSnackbarAlert,
+      } as AsyncThunkPayload)
+    );
 
     return () => {
       controller.abort();
@@ -35,7 +44,7 @@ export default function WeatherCard() {
   }, [urlInfo]);
 
   const dynamicSign = useMemo(() => {
-    switch (urlInfo.unit) {
+    switch (urlInfo!.unit) {
       case "metric":
         return "°C";
       case "imperial":
@@ -43,7 +52,9 @@ export default function WeatherCard() {
       default:
         return "°K";
     }
-  }, [urlInfo.unit]);
+    // The comment below disables ESLint (don't remove it).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [urlInfo!.unit]);
 
   return (
     <div className="weather-card" dir={i18n.dir(i18n.language)}>
@@ -130,7 +141,7 @@ export default function WeatherCard() {
                     </span>
                   </div>
 
-                  <div className="humidity ">
+                  <div className="humidity">
                     <MUI.Typography>{t("Humidity")}</MUI.Typography>
                     <span>{data.humidity}</span>
                   </div>

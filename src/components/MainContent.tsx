@@ -13,7 +13,7 @@ export default function MainContent() {
   // ===== [ SIDE EFFECTS ] ===== //
   useEffect(() => {
     // LOCALIZATION:
-    i18n.changeLanguage(urlInfo.lang);
+    i18n.changeLanguage(urlInfo!.lang);
     // The comment below disables ESLint (don't remove it).
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
