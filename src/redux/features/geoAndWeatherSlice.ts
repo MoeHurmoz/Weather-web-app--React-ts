@@ -282,15 +282,14 @@ const fetchGeoAndWeatherSlice = createSlice({
           { countryCode, cityName, timezone } = geoDataForAPIOperation;
 
         // PREPARE DATE AND TIME BASED ON TIMEZONE AND LANGUAGE:
-        const dateLng: string =
-            urlInfo!.lang === "ar" ? "ar-kw" : urlInfo!.lang,
-          myDateMoment: moment.Moment = moment().locale(dateLng).tz(timezone),
-          myTimeMoment: moment.Moment = moment().tz(timezone),
-          date: string = myDateMoment.format("LL"),
-          day: string = myDateMoment.format("dddd");
-        let time: string = myTimeMoment.format("LT");
+        const dateLang = urlInfo!.lang === "ar" ? "ar-tn" : urlInfo!.lang,
+          myMoment: moment.Moment = moment().tz(timezone),
+          day: string = myMoment.locale(dateLang).format("dddd");
 
-        if (dateLng === "ar-kw") {
+        let time: string = myMoment.locale("en").format("LT"),
+          date: string = myMoment.locale(dateLang).format("LL");
+
+        if (dateLang === "ar-tn") {
           switch (time.match(/[a-zA-Z]+/)![0]) {
             case "AM":
               time = time.replace("AM", "ص");
@@ -298,6 +297,11 @@ const fetchGeoAndWeatherSlice = createSlice({
             default:
               time = time.replace("PM", "م");
           }
+
+          const tn_month: string = myMoment.locale("ar-tn").format("MMMM"),
+            sa_month: string = myMoment.locale("ar-sa").format("MMMM");
+
+          date = date.replace(tn_month, sa_month);
         }
 
         const dateAndTimeData = { date, day, time };

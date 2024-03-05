@@ -1,5 +1,5 @@
 import * as MUI from "../../imports/MUI-Imports";
-import { useTranslation, PropTypes } from "../../imports/Other-Imports";
+import { useTranslation } from "../../imports/Other-Imports";
 import LocationAutocomplete from "./LocationAutocomplete";
 
 export default function FormDialog(props) {
@@ -31,11 +31,3 @@ export default function FormDialog(props) {
     </MUI.Dialog>
   );
 }
-
-// PROPTYPES CONFIGURATION:
-FormDialog.propTypes = {
-  open: PropTypes.bool.isRequired,
-  title: PropTypes.string.isRequired,
-  confirme: PropTypes.func.isRequired,
-  close: PropTypes.func.isRequired,
-};

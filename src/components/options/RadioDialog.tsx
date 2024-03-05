@@ -1,14 +1,26 @@
 import * as MUI from "../../imports/MUI-Imports";
-import { useTranslation, PropTypes } from "../../imports/Other-Imports";
+import { useTranslation } from "../../imports/Other-Imports";
+import { InitialState } from "../../redux/features/menuOptionsSlice";
 
-export default function RadioDialog(props) {
+// ===== [ INTERFACE DECLARATION ] ===== //
+interface RadioDialogProps {
+  open: InitialState["options"]["openRadio"];
+  title: InitialState["options"]["title"];
+  radioOptions: InitialState["options"]["options"];
+  selectedValue: InitialState["options"]["selectedValue"];
+  change: (newValue: string) => void;
+  confirme: () => void;
+  close: () => void;
+}
+
+export default function RadioDialog(props: RadioDialogProps) {
   const { open, title, radioOptions, selectedValue, change, confirme, close } =
     props;
 
   const { t, i18n } = useTranslation();
 
   // ===== [ EVENT HANDLER ] ===== //
-  const handleChange = (event) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     change(event.target.value);
   };
 
@@ -20,7 +32,7 @@ export default function RadioDialog(props) {
       onClose={close}
     >
       {/* ===== [ TITLE ] ===== */}
-      <MUI.DialogTitle textAlign={"center"}>{t(title)}</MUI.DialogTitle>
+      <MUI.DialogTitle textAlign={"center"}>{t(title!)}</MUI.DialogTitle>
 
       {/* ===== [ CONTENT ] ===== */}
       <MUI.DialogContent dividers sx={{ p: "16px 19px" }}>
@@ -36,7 +48,7 @@ export default function RadioDialog(props) {
             alignItems: "center",
           }}
         >
-          {radioOptions.map((option) => (
+          {radioOptions!.map((option) => (
             <MUI.FormControlLabel
               key={option.label}
               label={option.label}
@@ -56,14 +68,3 @@ export default function RadioDialog(props) {
     </MUI.Dialog>
   );
 }
-
-// PROPTYPES CONFIGURATION:
-RadioDialog.propTypes = {
-  open: PropTypes.bool.isRequired,
-  title: PropTypes.string.isRequired,
-  radioOptions: PropTypes.array.isRequired,
-  selectedValue: PropTypes.string.isRequired,
-  change: PropTypes.func.isRequired,
-  confirme: PropTypes.func.isRequired,
-  close: PropTypes.func.isRequired,
-};

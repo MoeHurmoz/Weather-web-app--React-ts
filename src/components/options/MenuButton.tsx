@@ -5,10 +5,14 @@ import { useState } from "../../imports/React-Imports";
 import { useUrlInfo } from "../../contexts/UrlInfoContext";
 import { useSnackbar } from "../../contexts/SnackbarContext";
 import { useTranslation } from "../../imports/Other-Imports";
-import { reducersActions } from "../../redux/features/menuOptionsSlice";
-import { useSelector, useDispatch } from "../../imports/Redux-Imports";
+import {
+  reducersActions,
+  ConfirmeLocationPayload,
+  ConfirmeRadioPayload,
+} from "../../redux/features/menuOptionsSlice";
+import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 
-const optionsArr = ["Location", "Units", "Language"];
+const optionsArr: string[] = ["Location", "Units", "Language"];
 
 export default function MenuButton() {
   // ===== [ CUSTOM HOOKS ] ===== //
@@ -17,8 +21,8 @@ export default function MenuButton() {
   const { t, i18n } = useTranslation(); // FROM I18NEXT LIBRARY
 
   // ===== [ REDUX HOOKS & ACTIONS ] ===== //
-  const options = useSelector((state) => state.menuOptions.options);
-  const dispatch = useDispatch();
+  const options = useAppSelector((state) => state.menuOptions.options);
+  const dispatch = useAppDispatch();
   const {
     click,
     closeLocation,
@@ -29,12 +33,12 @@ export default function MenuButton() {
   } = reducersActions;
 
   // ===== [ STATES ] ===== //
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const openMenu = Boolean(anchorEl);
 
   // ===== [ EVENT HANDLERS ] ===== //
-  const handleMenuClick = (event) => {
+  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -42,11 +46,11 @@ export default function MenuButton() {
     setAnchorEl(null);
   };
 
-  const handleOptionClick = (event) => {
+  const handleOptionClick = (event: React.MouseEvent<HTMLLIElement>) => {
     dispatch(
       click({
-        clickedFrom: event.target.id,
-        currentLang: UIC.urlInfo.lang,
+        clickedFrom: (event.target as HTMLLIElement).id,
+        currentLang: UIC.urlInfo!.lang,
         t,
       })
     );
@@ -58,11 +62,18 @@ export default function MenuButton() {
   };
 
   const handleConfirmeLocation = () => {
-    dispatch(confirmeLocation({ UIC, handleCloseMenu, showSnackbarAlert, t }));
+    dispatch(
+      confirmeLocation({
+        UIC,
+        handleCloseMenu,
+        showSnackbarAlert,
+        t,
+      } as ConfirmeLocationPayload)
+    );
   };
 
   // RADIO HANDLERS:
-  const handleRadioChange = (newValue) => {
+  const handleRadioChange = (newValue: string) => {
     dispatch(changeRadio(newValue));
   };
 
@@ -72,7 +83,13 @@ export default function MenuButton() {
 
   const handleConfirmeRadio = () => {
     dispatch(
-      confirmeRadio({ UIC, showSnackbarAlert, t, i18n, handleCloseMenu })
+      confirmeRadio({
+        UIC,
+        showSnackbarAlert,
+        t,
+        i18n,
+        handleCloseMenu,
+      } as ConfirmeRadioPayload)
     );
   };
 
@@ -106,7 +123,7 @@ export default function MenuButton() {
           {optionsArr.map((option) => (
             <MUI.MenuItem
               key={option}
-              id={option.match(/^\w{4}/)[0]}
+              id={option.match(/^\w{4}/)![0]}
               onClick={handleOptionClick}
               autoFocus={false}
             >
@@ -130,9 +147,9 @@ export default function MenuButton() {
       {options.openRadio && (
         <RadioDialog
           open={options.openRadio}
-          title={options.title}
-          radioOptions={options.options}
-          selectedValue={options.selectedValue}
+          title={options.title!}
+          radioOptions={options.options!}
+          selectedValue={options.selectedValue!}
           change={handleRadioChange}
           confirme={handleConfirmeRadio}
           close={handleCloseRadio}

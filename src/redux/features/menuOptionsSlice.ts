@@ -4,7 +4,7 @@ import { ShowSnackbarAlertProps } from "../../contexts/SnackbarContext";
 import { i18n } from "i18next";
 
 // ===== [ INTERFACE DECLARATIONS ] ===== //
-interface InitialState {
+export interface InitialState {
   options: {
     openLocation: boolean;
     openRadio: boolean;
@@ -24,13 +24,13 @@ interface ClickPayload {
   t: i18n["t"];
 }
 
-interface ConfirmeLocationPayload extends Pick<ClickPayload, "t"> {
+export interface ConfirmeLocationPayload extends Pick<ClickPayload, "t"> {
   UIC: UrlContext;
   handleCloseMenu: () => void;
   showSnackbarAlert: (config: ShowSnackbarAlertProps) => void;
 }
 
-interface ConfirmeRadioPayload extends ConfirmeLocationPayload {
+export interface ConfirmeRadioPayload extends ConfirmeLocationPayload {
   i18n: i18n;
 }
 
