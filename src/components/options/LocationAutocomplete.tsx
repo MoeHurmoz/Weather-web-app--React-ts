@@ -1,8 +1,9 @@
 import { Autocomplete, Box, TextField } from "../../imports/MUI-Imports";
 import { useTranslation } from "../../imports/Other-Imports";
 import { useState } from "../../imports/React-Imports";
-import { useDispatch } from "../../imports/Redux-Imports";
+import { useAppDispatch } from "../../redux/hooks";
 import { reducersActions } from "../../redux/features/menuOptionsSlice";
+import { Location } from "../../contexts/UrlInfoContext";
 
 export default function LocationAutocomplete() {
   // ===== [ CUSTOM HOOK ] ===== //
@@ -12,15 +13,20 @@ export default function LocationAutocomplete() {
   const [open, setOpen] = useState(false);
 
   // ===== [ REDUX HOOK & ACTION ] ===== //
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { changeLocation } = reducersActions;
 
   // ===== [ EVENT HANDLERS ] ===== //
-  const handleTextFieldChange = (event) => {
+  const handleTextFieldChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     /\w/.test(event.target.value) ? setOpen(true) : setOpen(false);
   };
 
-  const handleAutocompleteChange = (event, newValue) => {
+  const handleAutocompleteChange = (
+    event: React.SyntheticEvent,
+    newValue: Location | null
+  ) => {
     if (newValue != null) {
       dispatch(changeLocation(newValue));
     }
@@ -71,7 +77,7 @@ export default function LocationAutocomplete() {
   );
 }
 
-const location = [
+const location: Location[] = [
   { countryCode: "AE", cityName: "Abu Dhabi, United Arab Emirates" },
   { countryCode: "AE", cityName: "Ajman, United Arab Emirates" },
   { countryCode: "AE", cityName: "Al Ain, United Arab Emirates" },

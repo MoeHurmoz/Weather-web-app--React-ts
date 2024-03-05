@@ -2,7 +2,15 @@ import * as MUI from "../../imports/MUI-Imports";
 import { useTranslation } from "../../imports/Other-Imports";
 import LocationAutocomplete from "./LocationAutocomplete";
 
-export default function FormDialog(props) {
+// ===== [ INTERFACE DECLARATION ] ===== //
+interface FormDialogProps {
+  open: boolean;
+  title: string;
+  confirme: () => void;
+  close: () => void;
+}
+
+export default function FormDialog(props: FormDialogProps) {
   const { open, title, confirme, close } = props;
 
   const { t, i18n } = useTranslation();
