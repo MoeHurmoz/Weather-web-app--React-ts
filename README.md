@@ -25,6 +25,6 @@ Current Weather is a simple application that displays current weather informatio
 - **Moment.js**
 - **i18next**
 
-## Live Demo
+## Live Demo Server
 
 You can preview the application at the following link: [Live Demo](https://current-weather-moehurmoz-project.netlify.app/)
