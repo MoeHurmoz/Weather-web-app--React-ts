@@ -27,4 +27,4 @@ Current Weather is a simple application that displays current weather informatio
 
 ## Live Demo Server
 
-You can preview the application at the following link: [Live Demo](https://current-weather-moehurmoz-project.netlify.app/)
+You can preview the application at the following link: [Live Demo Server](https://current-weather-moehurmoz-project.netlify.app/)
